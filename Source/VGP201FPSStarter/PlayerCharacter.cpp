@@ -3,6 +3,7 @@
 
 #include "PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -41,6 +42,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("LookRight", this, &APlayerCharacter::LookRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::LookUp);
 
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerCharacter::Shoot);
+	PlayerInputComponent->BindAction("ReadyWeapon", IE_Pressed, this, &APlayerCharacter::ReadyWeapon);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::SprintStop);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::Crouch);
 
 
 }
@@ -65,5 +71,37 @@ void APlayerCharacter::LookRight(float InputVector)
 void APlayerCharacter::LookUp(float InputVector)
 {
 	AddControllerPitchInput(InputVector);
+}
+
+void APlayerCharacter::Shoot()
+{
+
+
+}
+
+void APlayerCharacter::Crouch()
+{
+
+
+}
+
+void APlayerCharacter::ReadyWeapon()
+{
+
+
+}
+
+void APlayerCharacter::SprintStart()
+{
+
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	UE_LOG(LogTemp, Warning, TEXT("Sprint started"));
+}
+
+void APlayerCharacter::SprintStop()
+{
+
+	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+	UE_LOG(LogTemp, Warning, TEXT("Sprint stopped"));
 }
 

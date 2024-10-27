@@ -30,9 +30,23 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
 
-	void MoveForward(float InputVector);
-	void MoveRight(float InputVector);
+	void MoveForward(float InputVector); //input for forward vector
+	void MoveRight(float InputVector);	//input for right vector
 
-	void LookRight(float InputVector);
-	void LookUp(float InputVector);
+	void LookRight(float InputVector);	//input for looking up/down
+	void LookUp(float InputVector);	//input for looking left/right
+
+	void Shoot();
+	void Crouch();
+	void ReadyWeapon();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float DefaultWalkSpeed = 600.0f; // Normal walking speed
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float SprintSpeed = 1200.0f; // Sprinting speed
+
+	
+	void SprintStart();
+	void SprintStop();
 };
