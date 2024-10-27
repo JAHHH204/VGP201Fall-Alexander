@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "PlayerCharacter.generated.h"
+#include "Player_Character.generated.h"
 
 UCLASS()
-class VGP201FPSSTARTER_API APlayerCharacter : public ACharacter
+class VGP201FPSSTARTER_API APlayer_Character : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	APlayerCharacter();
+	APlayer_Character();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,13 +26,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-protected:
-	UPROPERTY(EditAnywhere)
-	class UCameraComponent* CameraComponent;
-
-	void MoveForward(float InputVector);
-	void MoveRight(float InputVector);
-
-	void LookRight(float InputVector);
-	void LookUp(float InputVector);
 };
