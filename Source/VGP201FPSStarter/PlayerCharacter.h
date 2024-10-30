@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "BP_Gun.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -26,9 +27,16 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* GunOffsetTransformComponent;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
+
+
+	//UPROPERTY(EditAnywhere)
+	//class UCameraComponent* CameraComponent;
 
 	void MoveForward(float InputVector); //input for forward vector
 	void MoveRight(float InputVector);	//input for right vector
@@ -46,6 +54,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeed = 1200.0f; // Sprinting speed
 
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	ABP_Gun* EquippedGun;
 	
 	void SprintStart();
 	void SprintStop();

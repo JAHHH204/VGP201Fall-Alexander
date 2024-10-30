@@ -4,6 +4,7 @@
 #include "PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "BP_Gun.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -14,6 +15,9 @@ APlayerCharacter::APlayerCharacter()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
 	CameraComponent->SetupAttachment(RootComponent);
 	CameraComponent->bUsePawnControlRotation = true;
+
+	GunOffsetTransformComponent = CreateDefaultSubobject<USceneComponent>(TEXT("GunOffsetTransformComponent"));
+	GunOffsetTransformComponent->SetupAttachment(CameraComponent);
 }
 
 // Called when the game starts or when spawned
@@ -75,8 +79,16 @@ void APlayerCharacter::LookUp(float InputVector)
 
 void APlayerCharacter::Shoot()
 {
+	if (EquippedGun)
+	{
+		
+		EquippedGun->BPShoot();
+	}
+	else
+	{
 
-
+		UE_LOG(LogTemp, Warning, TEXT("No weapon equipped!"));
+	}
 }
 
 void APlayerCharacter::Crouch()

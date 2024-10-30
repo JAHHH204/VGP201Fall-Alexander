@@ -3,6 +3,9 @@
 
 #include "BP_Gun.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "PlayerCharacter.h"
 //#include "Engine/World.h"
 //#include "GameFramework/Actor.h"
 
@@ -14,6 +17,14 @@ ABP_Gun::ABP_Gun()
 
 	staticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = staticMeshComponent;
+
+	boxColliderComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderComponent"));
+	boxColliderComponent->SetupAttachment(staticMeshComponent);
+	boxColliderComponent->SetCollisionProfileName(TEXT("Trigger"));
+	boxColliderComponent->OnComponentBeginOverlap.AddDynamic(this, &ABP_Gun::pickupWeapon);
+
+	bulletOffsetTransformComponent = CreateDefaultSubobject<USceneComponent>(TEXT("BulletOffsetTransformComponent"));
+	bulletOffsetTransformComponent->SetupAttachment(staticMeshComponent);
 
 }
 
@@ -28,35 +39,59 @@ void ABP_Gun::BeginPlay()
 void ABP_Gun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
 
 }
 
-void BPShoot() 
+//void ABP_Gun::pickupWeapon(AActor* OtherActor)
+//{
+//	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+//	if (Player && Player->gunOffsetTransformComponent)
+//	{
+//		// Attach the gun to the player's gun offset component
+//		AttachToComponent(Player->gunOffsetTransformComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+//
+//		// Optional: Disable collision once the gun is picked up
+//		boxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+//	}
+//}
+
+void ABP_Gun::pickupWeapon(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//if (ProjectileClass)
-	//{
-	//	// Get the location and rotation of the muzzle or the gun's end
-	//	FVector MuzzleLocation = staticMeshComponent->GetSocketLocation(FName("Muzzle"));
-	//	FRotator MuzzleRotation = staticMeshComponent->GetSocketRotation(FName("Muzzle"));
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+	if (Player && Player->GunOffsetTransformComponent)
+	{
+		// Attach the gun to the player's gun offset component
+		AttachToComponent(Player->GunOffsetTransformComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
-	//	// Spawn the projectile at the muzzle
-	//	FActorSpawnParameters SpawnParams;
-	//	SpawnParams.Owner = this;
-	//	SpawnParams.Instigator = GetInstigator();
-
-	//	// Spawn the projectile
-	//	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
-
-	//	if (Projectile)
-	//	{
-	//		// Set the projectile's initial velocity
-	//		UStaticMeshComponent* ProjectileMesh = Cast<UStaticMeshComponent>(Projectile->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-	//		if (ProjectileMesh)
-	//		{
-	//			FVector LaunchDirection = MuzzleRotation.Vector();
-	//			ProjectileMesh->SetPhysicsLinearVelocity(LaunchDirection * BulletSpeed);
-	//		}
-	//	}
-	//}
+		// Disable collision once the gun is picked up
+		boxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
+
+void ABP_Gun::BPShoot()
+{
+	// Check if a projectile class is set
+	if (ProjectileClass)
+	{
+		// Get the spawn location and rotation from the bullet offset component
+		FVector SpawnLocation = bulletOffsetTransformComponent->GetComponentLocation();
+		FRotator SpawnRotation = bulletOffsetTransformComponent->GetComponentRotation();
+
+		// Spawn the projectile actor
+		AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
+		if (Projectile)
+		{
+			// Apply initial velocity to the projectile if it has a ProjectileMovementComponent
+			UProjectileMovementComponent* ProjectileMovement = Projectile->FindComponentByClass<UProjectileMovementComponent>();
+			if (ProjectileMovement)
+			{
+				ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * BulletSpeed);
+				ProjectileMovement->Activate();
+			}
+		}
+	}
+}
+
+;
 
