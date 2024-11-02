@@ -58,6 +58,7 @@ void ABP_Gun::Tick(float DeltaTime)
 
 void ABP_Gun::pickupWeapon(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("pickupWeapon function triggered!"));
 	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
 	if (Player && Player->GunOffsetTransformComponent)
 	{
@@ -66,6 +67,7 @@ void ABP_Gun::pickupWeapon(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 
 		// Disable collision once the gun is picked up
 		boxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		UE_LOG(LogTemp, Warning, TEXT("Gun attached to player"));
 	}
 }
 

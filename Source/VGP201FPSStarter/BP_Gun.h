@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "BP_Projectile.h"
 #include "BP_Gun.generated.h"
 
 
