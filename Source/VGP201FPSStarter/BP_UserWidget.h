@@ -18,6 +18,9 @@ public:
     virtual bool Initialize() override;
 
 protected:
+    UPROPERTY(EditAnywhere)
+    class UCameraComponent* cameraComponent;
+
     UPROPERTY(meta = (BindWidget))
     class UButton* StartGameButton;
 

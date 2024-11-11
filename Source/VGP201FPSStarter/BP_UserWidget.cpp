@@ -3,6 +3,7 @@
 
 #include "BP_UserWidget.h"
 #include "Components/Button.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -22,6 +23,9 @@ bool UBP_UserWidget::Initialize()
     {
         ExitButton->OnClicked.AddDynamic(this, &UBP_UserWidget::OnExitClicked);
     }
+
+   
+    
 
     return true;
 }
