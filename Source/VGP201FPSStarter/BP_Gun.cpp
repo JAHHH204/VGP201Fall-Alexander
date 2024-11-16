@@ -102,16 +102,19 @@ void ABP_Gun::BPShoot()
         ABP_Projectile* Projectile = GetWorld()->SpawnActor<ABP_Projectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
         if (Projectile)
         {
-            // Apply initial velocity to the projectile if it has a ProjectileMovementComponent
+            // Apply initial velocity to the projectile in the direction the gun is facing
+            FVector ShootDirection = GetActorForwardVector(); // Get the gun's forward direction
             UProjectileMovementComponent* ProjectileMovement = Projectile->FindComponentByClass<UProjectileMovementComponent>();
             if (ProjectileMovement)
             {
-                ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * BulletSpeed);
+                // Set the velocity of the projectile
+                ProjectileMovement->SetVelocityInLocalSpace(ShootDirection * BulletSpeed);
                 ProjectileMovement->Activate();
             }
         }
     }
 }
+
 
 
 ;
