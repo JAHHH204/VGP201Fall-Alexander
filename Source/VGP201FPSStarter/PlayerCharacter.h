@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USceneComponent* GunOffsetTransformComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	ABP_Gun* EquippedGun;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
@@ -53,9 +56,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeed = 1200.0f; // Sprinting speed
-
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	ABP_Gun* EquippedGun;
 	
 	void SprintStart();
 	void SprintStop();

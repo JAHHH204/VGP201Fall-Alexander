@@ -15,7 +15,7 @@ ABP_Gun::ABP_Gun()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	staticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+    staticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("staticMeshComponent"));
 	RootComponent = staticMeshComponent;
 
 	boxColliderComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderComponent"));
@@ -58,42 +58,61 @@ void ABP_Gun::Tick(float DeltaTime)
 
 void ABP_Gun::pickupWeapon(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("pickupWeapon function triggered!"));
-	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
-	if (Player && Player->GunOffsetTransformComponent)
-	{
-		// Attach the gun to the player's gun offset component
-		AttachToComponent(Player->GunOffsetTransformComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+    UE_LOG(LogTemp, Warning, TEXT("pickupWeapon function triggered!"));
 
-		// Disable collision once the gun is picked up
-		boxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		UE_LOG(LogTemp, Warning, TEXT("Gun attached to player"));
-	}
+    APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+    if (Player && Player->GunOffsetTransformComponent)
+    {
+        // Attach the gun to the player's gun offset component
+        AttachToComponent(Player->GunOffsetTransformComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+        // Optionally, update the player's equipped gun
+        Player->EquippedGun = this; // Assuming EquippedGun is a pointer to ABP_Gun in the player class
+
+        // Disable collision once the gun is picked up
+        boxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+        // Optionally, make the gun visible or change its state (if required)
+        SetActorHiddenInGame(false);
+
+        UE_LOG(LogTemp, Warning, TEXT("Gun attached to player"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Failed to attach gun: Player or Gun Offset Transform Component is invalid"));
+    }
 }
+
 
 void ABP_Gun::BPShoot()
 {
-	// Check if a projectile class is set
-	if (ProjectileClass)
-	{
-		// Get the spawn location and rotation from the bullet offset component
-		FVector SpawnLocation = bulletOffsetTransformComponent->GetComponentLocation();
-		FRotator SpawnRotation = bulletOffsetTransformComponent->GetComponentRotation();
+    // Check if a projectile class is set
+    if (ProjectileClass)
+    {
+        // Get the spawn location and rotation from the bullet offset component
+        FVector SpawnLocation = bulletOffsetTransformComponent->GetComponentLocation();
+        FRotator SpawnRotation = bulletOffsetTransformComponent->GetComponentRotation();
 
-		// Spawn the projectile actor
-		AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
-		if (Projectile)
-		{
-			// Apply initial velocity to the projectile if it has a ProjectileMovementComponent
-			UProjectileMovementComponent* ProjectileMovement = Projectile->FindComponentByClass<UProjectileMovementComponent>();
-			if (ProjectileMovement)
-			{
-				ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * BulletSpeed);
-				ProjectileMovement->Activate();
-			}
-		}
-	}
+        // Set up spawn parameters
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.Owner = this; // Set the gun as the owner
+        SpawnParams.Instigator = GetInstigator(); // Set the instigator (optional, for identifying the actor firing the projectile)
+
+        // Spawn the projectile actor
+        ABP_Projectile* Projectile = GetWorld()->SpawnActor<ABP_Projectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+        if (Projectile)
+        {
+            // Apply initial velocity to the projectile if it has a ProjectileMovementComponent
+            UProjectileMovementComponent* ProjectileMovement = Projectile->FindComponentByClass<UProjectileMovementComponent>();
+            if (ProjectileMovement)
+            {
+                ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * BulletSpeed);
+                ProjectileMovement->Activate();
+            }
+        }
+    }
 }
+
 
 ;
 

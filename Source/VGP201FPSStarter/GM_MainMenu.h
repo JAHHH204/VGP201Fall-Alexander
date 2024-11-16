@@ -16,6 +16,5 @@ class VGP201FPSSTARTER_API AGM_MainMenu : public AGameModeBase
 	
 public:
 	virtual void BeginPlay() override;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UBP_UserWidget> MainMenuClass;
+
 };
