@@ -1,31 +1,32 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "BP_UserWidget.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"  // Include this for UTextBlock
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-
 bool UBP_UserWidget::Initialize()
 {
-	    Super::Initialize();
+    Super::Initialize();
 
+    // Check for the buttons and bind actions
     if (StartGameButton)
     {
-       StartGameButton->OnClicked.AddDynamic(this, &UBP_UserWidget::OnStartGameClicked);
+        StartGameButton->OnClicked.AddDynamic(this, &UBP_UserWidget::OnStartGameClicked);
     }
     if (SettingsButton)
     {
-       SettingsButton->OnClicked.AddDynamic(this, &UBP_UserWidget::OnSettingsClicked);
+        SettingsButton->OnClicked.AddDynamic(this, &UBP_UserWidget::OnSettingsClicked);
     }
     if (ExitButton)
     {
         ExitButton->OnClicked.AddDynamic(this, &UBP_UserWidget::OnExitClicked);
     }
 
-   
-    
+    // Set the game title text
+    if (GameTitleText)
+    {
+        GameTitleText->SetText(FText::FromString(TEXT("Tome Of Terror"))); // Set your game title here
+    }
 
     return true;
 }
