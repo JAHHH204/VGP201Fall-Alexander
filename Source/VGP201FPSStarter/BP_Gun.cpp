@@ -43,18 +43,6 @@ void ABP_Gun::Tick(float DeltaTime)
 
 }
 
-//void ABP_Gun::pickupWeapon(AActor* OtherActor)
-//{
-//	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
-//	if (Player && Player->gunOffsetTransformComponent)
-//	{
-//		// Attach the gun to the player's gun offset component
-//		AttachToComponent(Player->gunOffsetTransformComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-//
-//		// Optional: Disable collision once the gun is picked up
-//		boxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-//	}
-//}
 
 void ABP_Gun::pickupWeapon(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -65,14 +53,22 @@ void ABP_Gun::pickupWeapon(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
     {
         // Attach the gun to the player's gun offset component
         AttachToComponent(Player->GunOffsetTransformComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+        Player->EquippedGun = this;
 
-        // Optionally, update the player's equipped gun
-        Player->EquippedGun = this; // Assuming EquippedGun is a pointer to ABP_Gun in the player class
+        // Disable all physics and collision for the gun
+        if (boxColliderComponent)
+        {
+            boxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            boxColliderComponent->SetSimulatePhysics(false);
+        }
 
-        // Disable collision once the gun is picked up
-        boxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        if (staticMeshComponent)
+        {
+            staticMeshComponent->SetSimulatePhysics(false);
+            staticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        }
 
-        // Optionally, make the gun visible or change its state (if required)
+        // Ensure the gun is visible
         SetActorHiddenInGame(false);
 
         UE_LOG(LogTemp, Warning, TEXT("Gun attached to player"));
@@ -82,6 +78,8 @@ void ABP_Gun::pickupWeapon(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
         UE_LOG(LogTemp, Warning, TEXT("Failed to attach gun: Player or Gun Offset Transform Component is invalid"));
     }
 }
+
+
 
 
 void ABP_Gun::BPShoot()

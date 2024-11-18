@@ -18,12 +18,17 @@ APlayerCharacter::APlayerCharacter()
 
 	GunOffsetTransformComponent = CreateDefaultSubobject<USceneComponent>(TEXT("GunOffsetTransformComponent"));
 	GunOffsetTransformComponent->SetupAttachment(CameraComponent);
+
+	// Initialize the health component
+	PlayerHealthComponent = CreateDefaultSubobject<UAC_PlayerHealth>(TEXT("PlayerHealthComponent"));
+
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
@@ -117,3 +122,15 @@ void APlayerCharacter::SprintStop()
 	UE_LOG(LogTemp, Warning, TEXT("Sprint stopped"));
 }
 
+void APlayerCharacter::TakeDamage(float DamageAmount)
+{
+	if (PlayerHealthComponent)
+	{
+		PlayerHealthComponent->TakeDamage(DamageAmount);
+		if (PlayerHealthComponent->IsDead())
+		{
+			// Handle death, e.g., trigger death animation or end the game
+			//UE_LOG(LogTemp, Warning, TEXT("Player is dead!"));
+		}
+	}
+}

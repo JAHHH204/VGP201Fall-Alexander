@@ -2,6 +2,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Components/CapsuleComponent.h"
+#include "BP_Projectile.h"
+#include "AC_EnemyHealth.h"  // Include the health component
+#include "AC_PlayerHealth.h"
 
 // Sets default values
 ABP_BookEnemy::ABP_BookEnemy()
@@ -19,6 +23,11 @@ ABP_BookEnemy::ABP_BookEnemy()
     // Initialize variables
     CurrentWaypoint = nullptr;
     CurrentState = EEnemyState::Idle;
+
+    GetCapsuleComponent()->SetGenerateOverlapEvents(true);
+
+    // Create and initialize health component
+    EnemyHealthComponent = CreateDefaultSubobject<UAC_EnemyHealth>(TEXT("EnemyHealth"));
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +37,12 @@ void ABP_BookEnemy::BeginPlay()
 
     // Find and store a reference to the player character
     PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+    UCapsuleComponent* LocalCapsuleComponent = GetCapsuleComponent();
+    if (LocalCapsuleComponent)
+    {
+        LocalCapsuleComponent->OnComponentHit.AddDynamic(this, &ABP_BookEnemy::OnProjectileHit);
+    }
 }
 
 // Called every frame
@@ -94,6 +109,7 @@ void ABP_BookEnemy::Patrol()
 }
 
 // Function to track and move toward the player
+// Function to track and move toward the player
 void ABP_BookEnemy::TrackPlayer()
 {
     if (!PlayerCharacter)
@@ -109,7 +125,13 @@ void ABP_BookEnemy::TrackPlayer()
     if (DistanceToPlayer <= DetectionRange && HasLineOfSightToPlayer())
     {
         FVector Direction = (PlayerCharacter->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-        AddMovementInput(Direction, 1.0f);
+        AddMovementInput(Direction, 1.0f); // Move towards the player
+
+        // Check if the player is within attack range
+        if (DistanceToPlayer <= AttackRange && !IsAttacking)
+        {
+            AttackPlayer(); // Call the function to attack
+        }
 
         CurrentState = EEnemyState::Tracking; // Update animation state
     }
@@ -118,4 +140,65 @@ void ABP_BookEnemy::TrackPlayer()
         Patrol(); // Patrol when the player is out of range
         CurrentState = EEnemyState::Patrolling; // Update animation state
     }
+}
+
+
+// Function to handle projectile hits
+void ABP_BookEnemy::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (OtherActor && OtherActor->IsA(ABP_Projectile::StaticClass()))
+    {
+        // Handle the projectile hit: Apply damage
+        UE_LOG(LogTemp, Warning, TEXT("Enemy hit by a projectile!"));
+
+        if (EnemyHealthComponent)
+        {
+            EnemyHealthComponent->TakeDamage(10.0f);  // Reduce health by 10 (or any other value)
+        }
+    }
+}
+
+void ABP_BookEnemy::OnDeath()
+{
+    // Handle death logic here (e.g., play animation, disable movement, etc.)
+    UE_LOG(LogTemp, Warning, TEXT("Enemy is dead!"));
+
+    // Optionally, you can disable the enemy actor or play a death animation
+    SetActorHiddenInGame(true); // Hide the enemy
+    SetActorEnableCollision(false); // Disable collision
+    // Or, you could destroy the enemy if it's dead
+    // Destroy();
+}
+
+// Function to attack the player
+void ABP_BookEnemy::AttackPlayer()
+{
+    // Prevent multiple attacks in a short time frame (add cooldown if needed)
+    if (GetWorld()->GetTimerManager().IsTimerActive(AttackTimerHandle))
+    {
+        return; // Don't attack again if the cooldown is still active
+    }
+
+    // Start the attack (animation, etc.)
+    IsAttacking = true;
+
+    // Deal damage to the player (ensure the player has a health component)
+    if (PlayerCharacter)
+    {
+        UAC_PlayerHealth* PlayerHealth = Cast<UAC_PlayerHealth>(PlayerCharacter->GetComponentByClass(UAC_PlayerHealth::StaticClass()));
+        if (PlayerHealth)
+        {
+            PlayerHealth->TakeDamage(AttackDamage); // Apply damage to the player
+            UE_LOG(LogTemp, Warning, TEXT("Enemy attacked the player! Damage: %f"), AttackDamage);
+        }
+    }
+
+    // Set cooldown for attack (e.g., 1 second before the enemy can attack again)
+    GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &ABP_BookEnemy::ResetAttack, 1.0f, false); // 1 second cooldown
+}
+
+// Function to reset the attack state after cooldown
+void ABP_BookEnemy::ResetAttack()
+{
+    IsAttacking = false;
 }

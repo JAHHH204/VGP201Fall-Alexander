@@ -9,7 +9,6 @@
 #include "BP_Gun.generated.h"
 
 
-
 UCLASS(Abstract)
 class VGP201FPSSTARTER_API ABP_Gun : public AActor
 {

@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "BP_Gun.h"
+#include "AC_PlayerHealth.h"  // Include the header for the health component
+#include "Components/ActorComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -20,7 +20,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -33,13 +33,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	ABP_Gun* EquippedGun;
 
+	// Add a reference to the health component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
+	UAC_PlayerHealth* PlayerHealthComponent;
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void TakeDamage(float DamageAmount);
+
 protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
-
-
-	//UPROPERTY(EditAnywhere)
-	//class UCameraComponent* CameraComponent;
 
 	void MoveForward(float InputVector); //input for forward vector
 	void MoveRight(float InputVector);	//input for right vector
@@ -56,7 +59,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeed = 1200.0f; // Sprinting speed
-	
+
 	void SprintStart();
 	void SprintStop();
+	float CurrentHealth;
+
+	UPROPERTY(EditAnywhere, Category = "Health")
+	float MaxHealth = 100.0f;
 };

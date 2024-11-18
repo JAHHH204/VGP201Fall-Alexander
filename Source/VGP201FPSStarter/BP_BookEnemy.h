@@ -2,16 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "AC_EnemyHealth.h" // Include the health component
 #include "BP_BookEnemy.generated.h"
-
-// Enum to define enemy states
-UENUM(BlueprintType)
-enum class EEnemyState : uint8
-{
-    Idle,
-    Patrolling,
-    Tracking
-};
 
 UCLASS()
 class VGP201FPSSTARTER_API ABP_BookEnemy : public ACharacter
@@ -33,37 +25,47 @@ public:
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-    // Speed at which the enemy moves
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-    float MoveSpeed = 300.0f;
-
-    // Detection range for tracking the player
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracking")
-    float DetectionRange = 1000.0f;
-
-    // Patrol waypoints for the enemy
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Patrol")
-    TArray<AActor*> PatrolWaypoints;
-
-private:
     // Reference to the player character
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tracking", meta = (AllowPrivateAccess = "true"))
     ACharacter* PlayerCharacter;
 
-    // Current waypoint being targeted
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Patrol", meta = (AllowPrivateAccess = "true"))
+    // Enemy health component
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
+    UAC_EnemyHealth* EnemyHealthComponent;
+
+    // Movement and detection
+    float MoveSpeed;
+    float DetectionRange;
+
+    // Patrol and tracking behavior
+    TArray<AActor*> PatrolWaypoints;
     AActor* CurrentWaypoint;
+    enum class EEnemyState { Idle, Patrolling, Tracking };
+    EEnemyState CurrentState;
 
-    // Current state of the enemy
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-    EEnemyState CurrentState = EEnemyState::Idle;
-
-    // Function to track and move toward the player
+    // Functions for movement and behavior
     void TrackPlayer();
-
-    // Function to patrol between waypoints
     void Patrol();
-
-    // Check if the enemy has a clear line of sight to the player
     bool HasLineOfSightToPlayer();
+
+    // Function to handle projectile hits
+    UFUNCTION()
+    void OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+    UFUNCTION(BlueprintCallable, Category = "Enemy")
+    void OnDeath();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+    float AttackRange = 200.0f; // The range at which the enemy can attack
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+    float AttackDamage = 25.0f; // Damage dealt by the enemy when attacking
+
+    // Timer to prevent rapid attacks
+    FTimerHandle AttackTimerHandle;
+
+    void AttackPlayer();
+    void ResetAttack();
+
+    UPROPERTY(EditAnywhere, Category = "Attack")
+    bool IsAttacking;
 };
