@@ -5,7 +5,7 @@
 UAC_EnemyHealth::UAC_EnemyHealth()
 {
     // Set this component to be initialized when the game starts, and to be ticked every frame
-    PrimaryComponentTick.bCanEverTick = false;  // Health doesn't need to be updated every frame
+    PrimaryComponentTick.bCanEverTick = false;  
 
     MaxHealth = 100.0f;  // Default maximum health value
     CurrentHealth = MaxHealth;
@@ -16,7 +16,7 @@ void UAC_EnemyHealth::BeginPlay()
 {
     Super::BeginPlay();
 
-    // Get the owner of this component, which should be the enemy character
+    // Get the owner of this component
     OwnerEnemy = Cast<ABP_BookEnemy>(GetOwner());
 }
 
@@ -25,7 +25,7 @@ void UAC_EnemyHealth::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    // Update logic related to health can be placed here if needed
+    
 }
 
 // Take damage function
@@ -45,10 +45,10 @@ void UAC_EnemyHealth::TakeDamage(float DamageAmount)
     // If health reaches zero, handle death
     if (!IsAlive())
     {
-        // Handle enemy death, for example, triggering animations or notifying the game manager
+        // Handle enemy death
         if (OwnerEnemy)
         {
-            OwnerEnemy->OnDeath();  // Example: Call the death function in the enemy class (you need to implement this)
+            OwnerEnemy->OnDeath();  
         }
     }
 }

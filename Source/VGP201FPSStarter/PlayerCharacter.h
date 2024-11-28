@@ -5,6 +5,7 @@
 #include "BP_Gun.h"
 #include "AC_PlayerHealth.h"  // Include the header for the health component
 #include "Components/ActorComponent.h"
+#include "BP_TomeBook.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -40,6 +41,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void TakeDamage(float DamageAmount);
 
+	ABP_TomeBook* NearbyBook;
+
+
+
 protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
@@ -66,4 +71,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Health")
 	float MaxHealth = 100.0f;
+
+	void CheckForNearbyBook();  // Function to check for nearby books
+	void PickupBook();  // Function to pick up the book
+
 };

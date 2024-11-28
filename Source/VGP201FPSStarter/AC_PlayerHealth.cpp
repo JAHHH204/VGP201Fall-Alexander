@@ -3,8 +3,7 @@
 // Sets default values for this component's properties
 UAC_PlayerHealth::UAC_PlayerHealth()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame. You can turn these features
-	// off to improve performance if you don't need them.
+
 	PrimaryComponentTick.bCanEverTick = true;
 	CurrentHealth = MaxHealth;
 }
@@ -14,7 +13,7 @@ void UAC_PlayerHealth::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Initialize any other necessary things when the game starts, such as setting health to max
+
 }
 
 // Called every frame
@@ -22,7 +21,7 @@ void UAC_PlayerHealth::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// Optionally, check if health is zero or update health-related logic
+	
 }
 
 // Method to handle taking damage
@@ -32,7 +31,7 @@ void UAC_PlayerHealth::TakeDamage(float DamageAmount)
 
 	if (CurrentHealth <= 0.0f)
 	{
-		// Handle player death (e.g., play death animation, trigger respawn, etc.)
+		// Handle player death ( play death animation, trigger respawn, etc.)
 		UE_LOG(LogTemp, Warning, TEXT("Player has died!"));
 	}
 }

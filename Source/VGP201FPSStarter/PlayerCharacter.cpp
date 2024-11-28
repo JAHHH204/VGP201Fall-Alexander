@@ -5,6 +5,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BP_Gun.h"
+#include "BP_TomeBook.h"
+
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -57,7 +60,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::SprintStop);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::Crouch);
 
-
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::PickupBook);
 }
 
 void APlayerCharacter::MoveForward(float InputVector)
@@ -134,3 +137,42 @@ void APlayerCharacter::TakeDamage(float DamageAmount)
 		}
 	}
 }
+
+void APlayerCharacter::CheckForNearbyBook()
+{
+	FVector Start = GetActorLocation();
+	FVector End = Start + GetActorForwardVector() * 200.0f; // Adjust range
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);  
+
+	// line trace to detect the book
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
+
+	if (bHit && HitResult.GetActor() && HitResult.GetActor()->IsA(ABP_TomeBook::StaticClass()))
+	{
+		NearbyBook = Cast<ABP_TomeBook>(HitResult.GetActor());
+		UE_LOG(LogTemp, Warning, TEXT("Book Detected!"));
+	}
+	else
+	{
+		NearbyBook = nullptr; 
+	}
+}
+
+// Pickup the book (hides or destroys it)
+void APlayerCharacter::PickupBook()
+{
+	if (NearbyBook)
+	{
+		// Hide the book 
+		NearbyBook->SetActorHiddenInGame(true);
+		NearbyBook->SetActorEnableCollision(false);
+
+		//  add the book to inventory here
+
+		UE_LOG(LogTemp, Warning, TEXT("Picked up a book!"));
+	}
+}
+

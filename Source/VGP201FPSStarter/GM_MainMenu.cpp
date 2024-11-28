@@ -6,7 +6,7 @@
 
 AGM_MainMenu::AGM_MainMenu()
 {
-	// Set this GameMode to use the default Pawn class and other settings if needed
+	
 }
 
 void AGM_MainMenu::BeginPlay()
@@ -24,7 +24,7 @@ void AGM_MainMenu::BeginPlay()
 		}
 	}
 
-	// Optional: Set the mouse cursor to be visible
+	//  Set the mouse cursor to be visible
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (PlayerController)
 	{
