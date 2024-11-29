@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BP_Gun.h"
 #include "BP_TomeBook.h"
+#include "BP_TomeAltar.h"
 
 
 
@@ -31,6 +32,7 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	EquippedTome = nullptr;
 
 	
 }
@@ -60,7 +62,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::SprintStop);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::Crouch);
 
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::PickupBook);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::Interact);
 }
 
 void APlayerCharacter::MoveForward(float InputVector)
@@ -176,3 +178,55 @@ void APlayerCharacter::PickupBook()
 	}
 }
 
+
+void APlayerCharacter::PickUpTome(ABP_TomeBook* Tome)
+{
+    if (!Tome)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No tome to pick up!"));
+        return;
+    }
+
+    if (EquippedTome)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Already holding a tome! Drop the current one first."));
+        return;
+    }
+
+    EquippedTome = Tome;
+    EquippedTome->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RightHandSocket"));
+    EquippedTome->SetActorEnableCollision(false);
+    UE_LOG(LogTemp, Warning, TEXT("Picked up tome: %s"), *Tome->GetName());
+
+    
+}
+
+void APlayerCharacter::Interact()
+{
+	if (!EquippedTome)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No tome equipped to place."));
+		return;
+	}
+
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors, ABP_TomeAltar::StaticClass());
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		ABP_TomeAltar* Altar = Cast<ABP_TomeAltar>(Actor);
+		if (Altar)
+		{
+			Altar->PlaceTome(nullptr, this, nullptr, 0, false, FHitResult());
+			EquippedTome = nullptr; // Clear the equipped tome after placing it
+			return;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("No altar found for interaction."));
+}
+
+bool APlayerCharacter::IsHoldingTome() const
+{
+	return EquippedTome != nullptr;
+}

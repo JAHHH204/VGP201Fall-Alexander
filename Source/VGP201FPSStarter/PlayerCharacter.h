@@ -43,6 +43,17 @@ public:
 
 	ABP_TomeBook* NearbyBook;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tome")
+	ABP_TomeBook* EquippedTome;
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void Interact();
+
+	UFUNCTION(BlueprintCallable,Category = "Interaction")
+	void PickUpTome(ABP_TomeBook* Tome);
+
+	UFUNCTION(BlueprintCallable, Category = "Tome")
+	bool IsHoldingTome() const;
 
 
 protected:
@@ -74,5 +85,7 @@ protected:
 
 	void CheckForNearbyBook();  // Function to check for nearby books
 	void PickupBook();  // Function to pick up the book
+
+
 
 };

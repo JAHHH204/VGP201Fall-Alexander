@@ -16,6 +16,12 @@ ABP_TomeBook::ABP_TomeBook()
     BoxColliderComponent->SetupAttachment(BookMesh);
     BoxColliderComponent->SetCollisionProfileName(TEXT("Trigger"));
     BoxColliderComponent->OnComponentBeginOverlap.AddDynamic(this, &ABP_TomeBook::OnPickup);
+
+    UPrimitiveComponent* TomeCollision = FindComponentByClass<UPrimitiveComponent>();
+    if (TomeCollision)
+    {
+        TomeCollision->OnComponentBeginOverlap.AddDynamic(this, &ABP_TomeBook::OnBeginOverlap);
+    }
 }
 
 void ABP_TomeBook::BeginPlay()
@@ -42,11 +48,21 @@ void ABP_TomeBook::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
         BoxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         BookMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         BookMesh->SetSimulatePhysics(false);
+        
 
         UE_LOG(LogTemp, Warning, TEXT("Book attached to player"));
     }
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("Failed to attach book: Player or Book Offset Transform Component is invalid"));
+    }
+}
+
+void ABP_TomeBook::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+    if (Player && !Player->IsHoldingTome())
+    {
+        Player->PickUpTome(this);
     }
 }
