@@ -38,7 +38,7 @@ void ABP_TomeAltar::PlaceTome(UPrimitiveComponent* OverlappedComponent, AActor* 
 
     // Place the tome
     TomeBook->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-    FVector PlacementLocation = GetActorLocation() + FVector(0, 0, PlacedTomes.Num() * 50); // Adjust Y-offset for stacking
+    FVector PlacementLocation = GetActorLocation() + FVector(0, PlacedTomes.Num() * 50, 0); // Adjust Y-offset for stacking
     TomeBook->SetActorLocation(PlacementLocation);
     TomeBook->SetActorEnableCollision(false);
 
