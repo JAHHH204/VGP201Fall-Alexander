@@ -48,7 +48,9 @@ void ABP_TomeBook::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
         BoxColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         BookMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         BookMesh->SetSimulatePhysics(false);
-        
+
+        // Update the EquippedTome in the player character
+        Player->PickUpTome(this); // Call this method to update the EquippedTome variable
 
         UE_LOG(LogTemp, Warning, TEXT("Book attached to player"));
     }
@@ -57,6 +59,7 @@ void ABP_TomeBook::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
         UE_LOG(LogTemp, Warning, TEXT("Failed to attach book: Player or Book Offset Transform Component is invalid"));
     }
 }
+
 
 void ABP_TomeBook::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
