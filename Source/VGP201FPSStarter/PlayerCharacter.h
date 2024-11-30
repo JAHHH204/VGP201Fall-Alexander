@@ -55,6 +55,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tome")
 	bool IsHoldingTome() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	TSubclassOf<UUserWidget> PlayerHUDClass;
+
+	// Player health component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+	UAC_PlayerHealth* HealthComponent;
+
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -86,6 +93,9 @@ protected:
 	void CheckForNearbyBook();  // Function to check for nearby books
 	void PickupBook();  // Function to pick up the book
 
+	UPROPERTY()
+	UUserWidget* PlayerHUD;
 
+	 void UpdateHUD();
 
 };
