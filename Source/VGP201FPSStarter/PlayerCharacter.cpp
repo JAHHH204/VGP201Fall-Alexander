@@ -72,7 +72,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::SprintStop);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::Crouch);
 
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::PullLever);
 }
 
 void APlayerCharacter::MoveForward(float InputVector)
@@ -246,4 +246,22 @@ void APlayerCharacter::Interact()
 bool APlayerCharacter::IsHoldingTome() const
 {
 	return EquippedTome != nullptr;
+}
+
+void APlayerCharacter::PullLever()
+{
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors, ABP_TomeGateLever::StaticClass());
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		ABP_TomeGateLever* Lever = Cast<ABP_TomeGateLever>(Actor);
+		if (Lever)
+		{
+			Lever->Interact();
+			return;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("No lever found for interaction."));
 }

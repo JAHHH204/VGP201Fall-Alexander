@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "BP_TomeBook.h"
 #include "AC_AmmoManager.h"
+#include "BP_TomeGateLever.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -79,6 +80,7 @@ protected:
 	void Shoot();
 	void Crouch();
 	void ReadyWeapon();
+	void PullLever();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DefaultWalkSpeed = 600.0f; // Normal walking speed
