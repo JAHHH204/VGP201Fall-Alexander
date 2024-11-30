@@ -8,6 +8,7 @@
 #include "BP_TomeBook.h"
 #include "AC_AmmoManager.h"
 #include "BP_TomeGateLever.h"
+#include "BP_TomeSafe.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -67,6 +68,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
 	UAC_AmmoManager* AmmoManager;
 
+	UPROPERTY(EditAnywhere,Category = "SafeReference")
+	ABP_TomeSafe* TomeSafe;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
@@ -81,6 +85,7 @@ protected:
 	void Crouch();
 	void ReadyWeapon();
 	void PullLever();
+	void EnterSafeCode();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DefaultWalkSpeed = 600.0f; // Normal walking speed

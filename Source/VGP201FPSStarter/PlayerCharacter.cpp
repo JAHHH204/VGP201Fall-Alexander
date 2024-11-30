@@ -7,6 +7,7 @@
 #include "BP_Gun.h"
 #include "BP_TomeBook.h"
 #include "BP_TomeAltar.h"
+#include "BP_TomeSafe.h"
 
 
 
@@ -73,6 +74,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::Crouch);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::PullLever);
+	PlayerInputComponent->BindAction("UseSafe", IE_Pressed, this, &APlayerCharacter::EnterSafeCode);
 }
 
 void APlayerCharacter::MoveForward(float InputVector)
@@ -264,4 +266,38 @@ void APlayerCharacter::PullLever()
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("No lever found for interaction."));
+}
+
+void APlayerCharacter::EnterSafeCode()
+{
+	// Define the start and end points for the line trace
+	FVector Start = GetActorLocation();
+	FVector End = Start + (GetActorForwardVector() * 200.0f); // 200 units ahead
+
+	// Trace parameters
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this); // Ignore the player character in the trace
+
+	FHitResult HitResult;
+
+	// Perform the line trace
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	{
+		// Check if we hit a TomeSafe actor
+		ABP_TomeSafe* TargetTomeSafe = Cast<ABP_TomeSafe>(HitResult.GetActor());  // Renamed variable
+		if (TargetTomeSafe)
+		{
+			// Interact with the safe
+			TargetTomeSafe->Interact();  // Use renamed variable here
+			UE_LOG(LogTemp, Warning, TEXT("Interacting with the safe!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No safe found in front of the player."));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No actor detected in front of the player."));
+	}
 }

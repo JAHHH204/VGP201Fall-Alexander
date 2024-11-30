@@ -1,27 +1,46 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "BP_TomeSafe.h"
+#include "Blueprint/UserWidget.h" // For widgets
+#include "Components/BoxComponent.h"
 
-// Sets default values
 ABP_TomeSafe::ABP_TomeSafe()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
+    BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
+    BoxCollider->SetupAttachment(RootComponent);
+    BoxCollider->SetGenerateOverlapEvents(true);
+    BoxCollider->SetCollisionProfileName(TEXT("Interactable"));
 }
 
-// Called when the game starts or when spawned
 void ABP_TomeSafe::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
 }
 
-// Called every frame
 void ABP_TomeSafe::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+    Super::Tick(DeltaTime);
 }
 
+void ABP_TomeSafe::Interact()
+{
+    // Trigger the UI widget
+    UE_LOG(LogTemp, Warning, TEXT("Player interacted with the safe."));
+    // Add code to create and display the widget
+    // Example:
+    // UUserWidget* SafeWidget = CreateWidget<UUserWidget>(GetWorld(), SafeWidgetClass);
+    // SafeWidget->AddToViewport();
+}
+
+void ABP_TomeSafe::CheckCode(const FString& InputCode)
+{
+    if (InputCode == CorrectCode)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Correct Code! Safe is now open."));
+        Destroy(); // Temporarily destroy the safe
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Incorrect Code."));
+    }
+}
