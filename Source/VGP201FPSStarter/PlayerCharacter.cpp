@@ -25,6 +25,8 @@ APlayerCharacter::APlayerCharacter()
 
 	// Initialize the health component
 	PlayerHealthComponent = CreateDefaultSubobject<UAC_PlayerHealth>(TEXT("PlayerHealthComponent"));
+	AmmoManager = CreateDefaultSubobject<UAC_AmmoManager>(TEXT("PlayerAmmoManager"));
+
 
 }
 
@@ -33,6 +35,14 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	EquippedTome = nullptr;
+
+	AmmoManager = FindComponentByClass<UAC_AmmoManager>();
+	if (AmmoManager == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AmmoManager not found on Player!"));
+
+		AmmoManager = NewObject<UAC_AmmoManager>(this);
+	}
 
 	
 }
@@ -91,12 +101,19 @@ void APlayerCharacter::Shoot()
 {
 	if (EquippedGun)
 	{
-		
-		EquippedGun->BPShoot();
+		// Check ammo before shooting
+		if (AmmoManager && AmmoManager->HasAmmo())
+		{
+			EquippedGun->BPShoot();
+			AmmoManager->DecreaseAmmo(1);  // Decrease ammo by 1 after a shot
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Out of Ammo!"));
+		}
 	}
 	else
 	{
-
 		UE_LOG(LogTemp, Warning, TEXT("No weapon equipped!"));
 	}
 }

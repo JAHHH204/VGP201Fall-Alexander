@@ -6,6 +6,7 @@
 #include "AC_PlayerHealth.h"  // Include the header for the health component
 #include "Components/ActorComponent.h"
 #include "BP_TomeBook.h"
+#include "AC_AmmoManager.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -62,6 +63,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 	UAC_PlayerHealth* HealthComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
+	UAC_AmmoManager* AmmoManager;
 
 protected:
 	UPROPERTY(EditAnywhere)
