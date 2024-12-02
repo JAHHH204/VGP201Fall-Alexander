@@ -26,12 +26,57 @@ public:
     // Function to append digits to the input code
     UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void AppendCode(FString Digit);
+    void OnButton0Clicked();
+    void OnButton1Clicked();
+    void OnButton2Clicked();
+    void OnButton3Clicked();
+    void OnButton4Clicked();
+    void OnButton5Clicked();
+    void OnButton6Clicked();
+    void OnButton7Clicked();
+    void OnButton8Clicked();
+    void OnButton9Clicked();
+
+    // The display area to show the entered code
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* CodeInputText;
 
 protected:
     // Code input (stored as a string)
     FString InputCode;
 
-    // The display area to show the entered code
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TomeSafe")
-    class UTextBlock* CodeDisplayText;  // Display TextBlock (no BindWidget here)
+
+
+    // Button references for digits 0-9
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button0;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button1;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button2;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button3;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button4;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button5;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button6;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button7;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button8;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Button9;
+
+    virtual void NativeConstruct() override;
 };

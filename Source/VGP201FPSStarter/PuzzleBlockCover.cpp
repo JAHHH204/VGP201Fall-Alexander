@@ -5,42 +5,40 @@
 // Sets default values
 APuzzleBlockCover::APuzzleBlockCover()
 {
-    // Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
-    PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to not call Tick() every frame to improve performance
+    PrimaryActorTick.bCanEverTick = false;
 
-    // Create a BoxComponent for collision
-    UBoxComponent* BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
-    BoxComponent->SetupAttachment(RootComponent); // Attach it to the root component
-    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); // Enable collision
-    BoxComponent->SetCollisionResponseToAllChannels(ECR_Ignore); // Ignore all collisions by default
-    BoxComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); // Block with dynamic objects (projectiles)
+    // Create and configure BoxComponent
+    BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+    RootComponent = BoxComponent;
+    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    BoxComponent->SetCollisionResponseToAllChannels(ECR_Ignore);  // Ignore all channels by default
+    BoxComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); // Block dynamic objects (like projectiles)
 
-    RootComponent = BoxComponent; // Set the BoxComponent as the root
-
-    // Bind the OnHit event to the function
+    // Bind collision event
     BoxComponent->OnComponentHit.AddDynamic(this, &APuzzleBlockCover::OnProjectileHit);
 }
 
-// Called when the game starts or when spawned
 void APuzzleBlockCover::BeginPlay()
 {
     Super::BeginPlay();
 }
 
-// Called every frame
-void APuzzleBlockCover::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-}
-
 void APuzzleBlockCover::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-    // Check if the actor that collided with this object is a projectile
+    // Debugging log to check if the event is triggered
+    if (OtherActor)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Hit detected with actor: %s"), *OtherActor->GetName());
+    }
+
     if (OtherActor && OtherActor->IsA(ABP_Projectile::StaticClass()))
     {
-        UE_LOG(LogTemp, Warning, TEXT("Mirror hit by a projectile!"));
+        UE_LOG(LogTemp, Log, TEXT("Puzzle block hit by a projectile. Destroying..."));
 
-        // Destroy the PuzzleBlockCover on collision with a projectile
-        Destroy();
+        // Optionally trigger effects before destroying
+        // PlayEffects();
+
+        Destroy();  // Destroy the puzzle block cover
     }
 }
