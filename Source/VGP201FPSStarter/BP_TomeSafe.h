@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Blueprint/UserWidget.h" // For widgets
 #include "Components/BoxComponent.h"
 #include "BP_TomeSafe.generated.h"
 
@@ -11,26 +12,34 @@ class VGP201FPSSTARTER_API ABP_TomeSafe : public AActor
     GENERATED_BODY()
 
 public:
-    // Sets default values for this actor's properties
     ABP_TomeSafe();
 
+    // Box Collider for interaction
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UBoxComponent* BoxCollider;
+
+    // Correct code to unlock the safe
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TomeSafe")
+    FString CorrectCode = "1234"; // Change this to your desired code
+
+    // The widget class for the safe's interaction UI
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TomeSafe")
+    TSubclassOf<UUserWidget> BP_SafeWidgetClass;
+
+    // Instance of the widget
+    UUserWidget* SafeWidgetInstance;
+
+    // Interact function to open the widget
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
+    void Interact();
+
+    // Check the entered code
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
+    void CheckCode(const FString& InputCode);
+
 protected:
-    // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
 public:
-    // Called every frame
     virtual void Tick(float DeltaTime) override;
-
-    UPROPERTY(EditAnywhere, Category = "Collider")
-    UBoxComponent* BoxCollider;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Safe")
-    FString CorrectCode = "1234"; // Set the correct code here
-
-    UFUNCTION(BlueprintCallable, Category = "Safe")
-    void Interact(); // Function called by the player to interact with the safe
-
-    UFUNCTION(BlueprintCallable, Category = "Safe")
-    void CheckCode(const FString& InputCode); // Function to verify the code
 };
