@@ -23,6 +23,11 @@ ABP_Projectile::ABP_Projectile()
 
     // Enable physics on the projectile mesh
     ProjectileMesh->SetSimulatePhysics(true);
+
+    ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    ProjectileMesh->SetCollisionResponseToAllChannels(ECR_Ignore);  // Ignore all by default
+    ProjectileMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); // Block dynamic objects
+
 }
 
 // Called when the game starts or when spawned
@@ -40,15 +45,12 @@ void ABP_Projectile::Tick(float DeltaTime)
 // Fire the projectile in the given direction
 void ABP_Projectile::FireInDirection(const FVector& ShootDirection)
 {
-    // Ensure the projectile movement component is properly set
     if (ProjectileMovementComponent)
     {
-        // Normalize the ShootDirection to ensure consistent speed, then set the velocity
         ProjectileMovementComponent->Velocity = ShootDirection.GetSafeNormal() * ProjectileSpeed;
 
-        // Optional: Align the projectile's rotation to match the direction of travel
         FVector LookAtDirection = ShootDirection.GetSafeNormal();
-        FRotator NewRotation = LookAtDirection.Rotation();  // Convert direction to rotation
-        SetActorRotation(NewRotation);  // Apply the new rotation to the projectile
+        FRotator NewRotation = LookAtDirection.Rotation();
+        SetActorRotation(NewRotation);
     }
 }
