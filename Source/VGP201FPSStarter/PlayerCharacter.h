@@ -68,7 +68,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
 	UAC_AmmoManager* AmmoManager;
 
-	UPROPERTY(EditAnywhere,Category = "SafeReference")
+	UPROPERTY(VisibleAnywhere,Category = "SafeReference")
 	ABP_TomeSafe* TomeSafe;
 
 protected:

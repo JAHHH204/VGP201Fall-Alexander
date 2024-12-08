@@ -284,11 +284,11 @@ void APlayerCharacter::EnterSafeCode()
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
 	{
 		// Check if we hit a TomeSafe actor
-		ABP_TomeSafe* TargetTomeSafe = Cast<ABP_TomeSafe>(HitResult.GetActor());  // Renamed variable
-		if (TargetTomeSafe)
+		ABP_TomeSafe* LocalTomeSafe = Cast<ABP_TomeSafe>(HitResult.GetActor());
+		if (LocalTomeSafe)
 		{
 			// Interact with the safe
-			TargetTomeSafe->Interact();  // Use renamed variable here
+			LocalTomeSafe->Interact();
 			UE_LOG(LogTemp, Warning, TEXT("Interacting with the safe!"));
 		}
 		else
