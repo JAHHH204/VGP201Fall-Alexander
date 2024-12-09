@@ -71,6 +71,9 @@ public:
 	UPROPERTY(VisibleAnywhere,Category = "SafeReference")
 	ABP_TomeSafe* TomeSafe;
 
+	UPROPERTY(VisibleAnywhere,Category = "SoundCues")
+	USoundCue* GunCue;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;

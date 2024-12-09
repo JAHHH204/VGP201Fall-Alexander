@@ -30,24 +30,29 @@ void ABP_TomeSafe::Interact()
         return;
     }
 
-    if (!SafeWidgetInstance) // Create widget only if not already created
+    if (!SafeWidgetInstance)
     {
         SafeWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), BP_SafeWidgetClass);
         if (SafeWidgetInstance)
         {
-            SafeWidgetInstance->AddToViewport();
+            SafeWidgetInstance->AddToViewport(100); // Ensure it is on top
             UE_LOG(LogTemp, Warning, TEXT("Safe widget displayed."));
 
-            // Show the mouse cursor
+            // Show the mouse cursor and set input mode
             APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
             if (PlayerController)
             {
                 PlayerController->bShowMouseCursor = true;
-                PlayerController->SetInputMode(FInputModeUIOnly());
+                PlayerController->SetInputMode(FInputModeUIOnly().SetWidgetToFocus(SafeWidgetInstance->TakeWidget()));
             }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to create SafeWidgetInstance!"));
         }
     }
 }
+
 
 
 void ABP_TomeSafe::CheckCode(const FString& InputCode)

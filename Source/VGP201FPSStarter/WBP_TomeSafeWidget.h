@@ -26,16 +26,27 @@ public:
     // Function to append digits to the input code
     UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void AppendCode(FString Digit);
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton0Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton1Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton2Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton3Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton4Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton5Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton6Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton7Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton8Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton9Clicked();
+
 
     // The display area to show the entered code
     UPROPERTY(meta = (BindWidget))

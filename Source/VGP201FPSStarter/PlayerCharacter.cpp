@@ -8,6 +8,8 @@
 #include "BP_TomeBook.h"
 #include "BP_TomeAltar.h"
 #include "BP_TomeSafe.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -108,6 +110,7 @@ void APlayerCharacter::Shoot()
 		{
 			EquippedGun->BPShoot();
 			AmmoManager->DecreaseAmmo(1);  // Decrease ammo by 1 after a shot
+			UGameplayStatics::SpawnSoundAttached(GunCue, GetRootComponent());
 		}
 		else
 		{
