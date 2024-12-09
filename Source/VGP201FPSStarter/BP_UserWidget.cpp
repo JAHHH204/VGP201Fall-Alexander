@@ -3,6 +3,7 @@
 #include "Components/TextBlock.h"  // Include this for UTextBlock
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GM_MainMenu.h"  // Include your main menu game mode class for accessing ShowSettings
 
 bool UBP_UserWidget::Initialize()
 {
@@ -39,6 +40,18 @@ void UBP_UserWidget::OnStartGameClicked()
 void UBP_UserWidget::OnSettingsClicked()
 {
     UE_LOG(LogTemp, Warning, TEXT("Settings Clicked"));
+
+    // Check if the main menu game mode is valid and call ShowSettings
+    AGameModeBase* GameMode = UGameplayStatics::GetGameMode(this);
+    AGM_MainMenu* MainMenuGameMode = Cast<AGM_MainMenu>(GameMode);
+    if (MainMenuGameMode)
+    {
+        MainMenuGameMode->ShowSettings();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to cast to AGM_MainMenu"));
+    }
 }
 
 void UBP_UserWidget::OnExitClicked()

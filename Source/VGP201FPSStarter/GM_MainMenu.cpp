@@ -1,56 +1,68 @@
 #include "GM_MainMenu.h"
 #include "Blueprint/UserWidget.h"
-#include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
-#include "BP_UserWidget.h"
+#include "Components/Button.h"
+#include "BP_SettingWidget.h"
 
 AGM_MainMenu::AGM_MainMenu()
 {
-	
+	// Set default values
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AGM_MainMenu::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Check if the widget class is assigned in the editor
+	// Create the Main Menu Widget and add it to the viewport (if not already done in BP)
 	if (MainMenuWidgetClass)
 	{
-		// Create and add the main menu widget to the viewport
 		MainMenuWidget = CreateWidget<UBP_UserWidget>(GetWorld(), MainMenuWidgetClass);
 		if (MainMenuWidget)
 		{
 			MainMenuWidget->AddToViewport();
+
+
 		}
-	}
-
-	//  Set the mouse cursor to be visible
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController)
-	{
-		PlayerController->bShowMouseCursor = true;
-	}
-
-	if (MainMenuMusic)
-	{
-		UGameplayStatics::PlaySound2D(this, MainMenuMusic);
 	}
 }
 
 void AGM_MainMenu::StartGame()
 {
-	// Transition to the main game level
-	UGameplayStatics::OpenLevel(this, FName("TestLevel"));
+	// Start the game (replace with actual game start functionality)
+	UE_LOG(LogTemp, Warning, TEXT("Starting the game!"));
 }
 
 void AGM_MainMenu::ShowSettings()
 {
-	// Show settings screen or implement settings menu logic
-	UE_LOG(LogTemp, Warning, TEXT("Settings Button Clicked"));
+    UE_LOG(LogTemp, Warning, TEXT("ShowSettings function called"));
+
+    if (BP_SettingWidgetClass)
+    {
+        UBP_SettingWidget* SettingWidget = CreateWidget<UBP_SettingWidget>(GetWorld(), BP_SettingWidgetClass);
+
+        if (SettingWidget)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Setting Widget Created"));
+            SettingWidget->DisplayWidget();
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to create setting widget"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("BP_SettingWidgetClass is not assigned"));
+    }
 }
+
+
+
 
 void AGM_MainMenu::ExitGame()
 {
-	// Quit the game
-	UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, true);
+	// Exit the game (or quit to desktop)
+	UE_LOG(LogTemp, Warning, TEXT("Exiting game."));
+	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 }

@@ -5,6 +5,8 @@
 #include "BP_UserWidget.h"
 #include "GM_MainMenu.generated.h"
 class USoundCue;
+class UBP_SettingWidget;
+
 /**
  * Main Menu Game Mode class
  */
@@ -29,6 +31,9 @@ public:
 	UFUNCTION()
 	void ExitGame();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UBP_SettingWidget> BP_SettingWidgetClass;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -45,5 +50,4 @@ private:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Music")
 	USoundCue* MainMenuMusic;
-
 };
