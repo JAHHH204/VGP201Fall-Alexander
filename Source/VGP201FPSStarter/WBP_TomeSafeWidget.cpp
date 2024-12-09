@@ -2,11 +2,14 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "BP_TomeSafe.h"
+#include "PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 void UWBP_TomeSafeWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-    AppendCode("Enter Code");
 
     // Dynamically bind buttons to their respective click handlers
     if (Button0)
@@ -57,6 +60,16 @@ void UWBP_TomeSafeWidget::NativeConstruct()
     if (Button9)
     {
         Button9->OnClicked.AddDynamic(this, &UWBP_TomeSafeWidget::OnButton9Clicked);
+        UE_LOG(LogTemp, Warning, TEXT("Button 9 dynamically bound!"));
+    }
+    if (Button9)
+    {
+        ButtonSubmit->OnClicked.AddDynamic(this, &UWBP_TomeSafeWidget::OnButtonSubmitClicked);
+        UE_LOG(LogTemp, Warning, TEXT("Button 9 dynamically bound!"));
+    }
+    if (Button9)
+    {
+        ButtonCancel->OnClicked.AddDynamic(this, &UWBP_TomeSafeWidget::OnButtonCancelClicked);
         UE_LOG(LogTemp, Warning, TEXT("Button 9 dynamically bound!"));
     }
 
@@ -139,6 +152,35 @@ void UWBP_TomeSafeWidget::OnButton9Clicked()
     UE_LOG(LogTemp, Warning, TEXT("Button 9 clicked"));
 }
 
+void UWBP_TomeSafeWidget::OnButtonSubmitClicked()
+{
+    SubmitCode();
+    UE_LOG(LogTemp, Warning, TEXT("Submit clicked"));
+}
+
+void UWBP_TomeSafeWidget::OnButtonCancelClicked()
+{
+    // Remove widget from parent
+    this->RemoveFromParent();
+
+    // Reset SafeWidgetInstance in BP_TomeSafe
+    if (SafeActorReference)
+    {
+        SafeActorReference->ResetWidgetInstance();
+    }
+
+    // Set input mode back to game only
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+    if (PlayerController)
+    {
+        FInputModeGameOnly InputMode;
+        PlayerController->SetInputMode(InputMode);
+        PlayerController->bShowMouseCursor = false;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("Cancel clicked"));
+}
+
 void UWBP_TomeSafeWidget::AppendCode(FString Digit)
 {
     UE_LOG(LogTemp, Warning, TEXT("Appending code: %s"), *Digit);  // Debug log for the digit
@@ -161,16 +203,49 @@ void UWBP_TomeSafeWidget::AppendCode(FString Digit)
     }
 }
 
+void UWBP_TomeSafeWidget::SetSafeActorReference(ABP_TomeSafe* SafeActor)
+{
+    if (SafeActor)
+    {
+        SafeActorReference = SafeActor;
+        UE_LOG(LogTemp, Warning, TEXT("SafeActorReference set: %s"), *SafeActor->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to set SafeActorReference! The provided SafeActor is null."));
+    }
+}
+
 
 void UWBP_TomeSafeWidget::SubmitCode()
 {
-    if (SafeActorReference)
+    if (!SafeActorReference)
+    {
+        UE_LOG(LogTemp, Error, TEXT("SafeActorReference is null when submitting the code!"));
+        return;
+    }
+
+    // Log the input code for debugging
+    UE_LOG(LogTemp, Warning, TEXT("Submitted Code: %s"), *InputCode);
+
+    FString CorrectCode = SafeActorReference->GetCorrectCode();
+    UE_LOG(LogTemp, Warning, TEXT("Correct Code: %s"), *CorrectCode);
+
+    if (InputCode == CorrectCode)
     {
         SafeActorReference->CheckCode(InputCode);
+        UE_LOG(LogTemp, Warning, TEXT("Correct Code! Safe is now open."));
+    }
+    else
+    {
         InputCode.Empty(); // Reset the code after submission
         if (CodeInputText)
         {
             CodeInputText->SetText(FText::FromString(InputCode)); // Clear the displayed code
         }
+        UE_LOG(LogTemp, Warning, TEXT("Incorrect Code."));
     }
 }
+
+
+

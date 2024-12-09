@@ -15,6 +15,9 @@ class VGP201FPSSTARTER_API UWBP_TomeSafeWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
+    void SetSafeActorReference(ABP_TomeSafe* SafeActor);
+
     // Function to handle code submission
     UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void SubmitCode();
@@ -46,6 +49,10 @@ public:
     void OnButton8Clicked();
     UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void OnButton9Clicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
+    void OnButtonSubmitClicked();
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
+    void OnButtonCancelClicked();
 
 
     // The display area to show the entered code
@@ -88,6 +95,12 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     class UButton* Button9;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* ButtonSubmit;
+
+    UPROPERTY(meta = (BindWidget))
+    class UButton* ButtonCancel;
 
     virtual void NativeConstruct() override;
 };

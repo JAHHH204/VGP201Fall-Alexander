@@ -33,6 +33,11 @@ public:
     UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void Interact();
 
+    UFUNCTION(BlueprintCallable, Category = "TomeSafe")
+    void ResetWidgetInstance();
+
+    FString GetCorrectCode() const;
+
     // Check the entered code
     UFUNCTION(BlueprintCallable, Category = "TomeSafe")
     void CheckCode(const FString& InputCode);
