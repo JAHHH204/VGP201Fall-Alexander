@@ -1,45 +1,59 @@
 #include "AC_AmmoManager.h"
+#include "BP_HUDWidget.h"
+#include "Kismet/GameplayStatics.h"
 
-// Sets default values for this component's properties
+// Sets default values
 UAC_AmmoManager::UAC_AmmoManager()
 {
-	// Set this component to be initialized when the game starts, and to tick every frame if needed
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// Initialize ammo variables
-	MaxAmmo = 100;  // Set your default max ammo
-	CurrentAmmo = MaxAmmo;  // Start with full ammo
+	MaxAmmo = 100;  // Example
+	CurrentAmmo = MaxAmmo;
 }
 
 // Called when the game starts
 void UAC_AmmoManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Find HUD widget in the game and set it (Optional: can be done manually in the editor if needed)
+	// For example, if you have the widget already added to the viewport:
+	// HUDWidget = Cast<UBP_HUDWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
 }
 
-// Called every frame
-void UAC_AmmoManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+// Update HUD widget with current ammo
+void UAC_AmmoManager::SetHUDWidget(UBP_HUDWidget* InHUDWidget)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (InHUDWidget)
+	{
+		HUDWidget = InHUDWidget;
+		// Initialize HUD with current ammo
+		HUDWidget->UpdateAmmoText(CurrentAmmo);
+	}
 }
 
-// Refill ammo by a certain amount
+// Refill ammo
 void UAC_AmmoManager::RefillAmmo(int32 Amount)
 {
-	// Add ammo and clamp it to not exceed MaxAmmo
 	CurrentAmmo = FMath::Clamp(CurrentAmmo + Amount, 0, MaxAmmo);
-	UE_LOG(LogTemp, Warning, TEXT("Refilled ammo by %d. Current ammo: %d"), Amount, CurrentAmmo);
+
+	if (HUDWidget)
+	{
+		HUDWidget->UpdateAmmoText(CurrentAmmo);  // Update HUD with new ammo count
+	}
 }
 
-// Decrease ammo by a certain amount
+// Decrease ammo
 void UAC_AmmoManager::DecreaseAmmo(int32 Amount)
 {
-	// Decrease ammo and clamp it to not go below 0
 	CurrentAmmo = FMath::Clamp(CurrentAmmo - Amount, 0, MaxAmmo);
-	UE_LOG(LogTemp, Warning, TEXT("Decreased ammo by %d. Current ammo: %d"), Amount, CurrentAmmo);
+
+	if (HUDWidget)
+	{
+		HUDWidget->UpdateAmmoText(CurrentAmmo);  // Update HUD with new ammo count
+	}
 }
 
-// Check if the player has any ammo left
+// Check if the player has ammo
 bool UAC_AmmoManager::HasAmmo() const
 {
 	return CurrentAmmo > 0;

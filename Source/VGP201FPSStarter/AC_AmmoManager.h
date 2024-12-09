@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "BP_HUDWidget.h" // Include HUD widget header
 #include "AC_AmmoManager.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -18,17 +19,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	// Ammo properties
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	int32 MaxAmmo;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
-	int32 CurrentAmmo;
+	// Function to set the HUD widget
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+	void SetHUDWidget(UBP_HUDWidget* InHUDWidget);
 
-	// Refill ammo to max
+	// Refill ammo by a certain amount
 	UFUNCTION(BlueprintCallable, Category = "Ammo")
 	void RefillAmmo(int32 Amount);
 
@@ -36,7 +33,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ammo")
 	void DecreaseAmmo(int32 Amount);
 
-	// Check if the player has ammo
+	// Check if player has ammo
 	UFUNCTION(BlueprintCallable, Category = "Ammo")
 	bool HasAmmo() const;
+
+private:
+	// Current and Max Ammo
+	int32 CurrentAmmo;
+	int32 MaxAmmo;
+
+	// Reference to the HUD widget
+	UPROPERTY()
+	UBP_HUDWidget* HUDWidget;
 };

@@ -9,6 +9,7 @@
 #include "AC_AmmoManager.h"
 #include "BP_TomeGateLever.h"
 #include "BP_TomeSafe.h"
+#include "BP_HUDWidget.h" 
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
